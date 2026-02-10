@@ -12,4 +12,4 @@ RUN yarn build
 
 EXPOSE 4000
 
-CMD ["npm","run","start:prod"]
+CMD ["yarn", "start:prod"]
