@@ -1,10 +1,9 @@
+import { AbstractEntity } from '../../common/abstract/entity.abstract';
 
-
-import { EntityAbstract } from 'src/common/abstract/entity.abstract';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('users')
-export class User extends EntityAbstract {
+export class User extends AbstractEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

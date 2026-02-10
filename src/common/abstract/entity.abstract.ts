@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class EntityAbstract {
+export abstract class AbstractEntity {
   @CreateDateColumn()
   createdOnDate: Date;
   @Column({ nullable: true })
