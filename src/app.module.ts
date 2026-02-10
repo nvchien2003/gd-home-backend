@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSource } from './database/data-source';
 import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
+import AppDataSource from './database/data-source';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot(dataSource),
+    TypeOrmModule.forRoot(AppDataSource.options),
     // AuthModule,
     UserModule,
   ],
