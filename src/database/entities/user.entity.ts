@@ -1,7 +1,9 @@
-import { EntityAbstract } from "src/common/abstract/entity.abstract";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
-@Entity("users")
+
+import { EntityAbstract } from 'src/common/abstract/entity.abstract';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+@Entity('users')
 export class User extends EntityAbstract {
   @PrimaryGeneratedColumn()
   id: number;
@@ -9,19 +11,18 @@ export class User extends EntityAbstract {
   @Column()
   email: string;
 
-  @Column({select: false})
+  @Column({ select: false })
   password: string;
 
-  @Column({nullable : true})
+  @Column({ nullable: true })
   firstName: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   lastName: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   avatar: string;
 
-  @Column({default: false})
+  @Column({ default: false })
   isAdmin: boolean;
-
 }
