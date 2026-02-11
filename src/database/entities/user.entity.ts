@@ -4,8 +4,8 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('users')
 export class User extends AbstractEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   email: string;
@@ -24,4 +24,7 @@ export class User extends AbstractEntity {
 
   @Column({ default: false })
   isAdmin: boolean;
+
+  @Column({ default: false })
+  verify: boolean;
 }

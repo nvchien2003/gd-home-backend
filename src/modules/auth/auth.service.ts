@@ -1,14 +1,29 @@
 import { User } from '../../database/entities/user.entity';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
+import { MailService } from '../mail/mail.service';
+import { OtpService } from '../otp/otp.service';
+import {
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  SignUpDto,
+  VerifyOtpDto,
+} from './dto/auth.dto';
+import { OtpType } from '../../common/constant/constant';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+    private readonly otpService: OtpService,
   ) {}
 
   /**
@@ -21,6 +36,10 @@ export class AuthService {
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
+    if (!user.verify) {
+      throw new UnauthorizedException('Please verify your email before login');
+    }
+
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
@@ -28,6 +47,74 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async signup(dto: SignUpDto) {
+    console.log('to', dto);
+    const user = await this.userService.create(dto);
+
+    const otp = await this.otpService.create(user.email, OtpType.VERIFY);
+    await this.mailService.sendOtp(user.email, otp.code);
+
+    return { message: 'Check email to verify' };
+  }
+
+  async verifyOtp(dto: VerifyOtpDto) {
+    const otp = await this.otpService.validate(dto.email, dto.code, dto.type);
+    console.log('---------otp', dto.type);
+    console.log('---------otp', OtpType.RESET);
+
+    if (!otp) throw new BadRequestException('Invalid or expired OTP');
+
+    // 👉 Verify account
+    if (dto.type === OtpType.VERIFY) {
+      await this.userService.verify(dto.email);
+      return { message: 'Account verified' };
+    }
+
+    // 👉 Reset password
+    if (dto.type === OtpType.RESET) {
+      const resetToken = this.jwtService.sign(
+        { email: dto.email, type: 'RESET' },
+        { expiresIn: '10m' },
+      );
+      console.log('-----------------reset', resetToken);
+
+      return { resetToken };
+    }
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const user = await this.userService.findByEmail(dto.email);
+    if (!user) return { message: 'If email exists, OTP sent' };
+
+    const otp = await this.otpService.create(dto.email, OtpType.RESET);
+    await this.mailService.sendOtp(dto.email, otp.code);
+
+    return { message: 'OTP sent' };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const { resetToken, newPass, confirmPass } = dto;
+
+    if (newPass !== confirmPass) {
+      throw new BadRequestException('Password confirmation does not match');
+    }
+
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(resetToken);
+    } catch {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+
+    if (payload.type !== 'RESET') {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    await this.userService.updatePassword(payload.email, newPass);
+
+    return { message: 'Password updated successfully' };
   }
 
   /**

@@ -11,6 +11,10 @@ async function bootstrap() {
     .setDescription('GD Home API description')
     .setVersion('1.0')
     .addTag('GD Home')
+    .addBearerAuth({
+      type: 'http',
+      in: 'header',
+    })
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -28,7 +32,6 @@ async function bootstrap() {
   });
 
   await app.listen(process.env.PORT || 4000);
-
 }
 
 bootstrap();
