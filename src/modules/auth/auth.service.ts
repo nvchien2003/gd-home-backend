@@ -17,6 +17,7 @@ import {
   VerifyOtpDto,
 } from './dto/auth.dto';
 import { OtpType } from '../../common/constant/constant';
+import { verify } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -144,6 +145,7 @@ export class AuthService {
         lastName: user.lastName,
         avatar: user.avatar,
         isAdmin: user.isAdmin,
+        verify: user.verify,
       },
     };
   }
