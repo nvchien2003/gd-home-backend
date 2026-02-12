@@ -11,6 +11,7 @@ import { MailService } from '../mail/mail.service';
 import { OtpService } from '../otp/otp.service';
 import {
   ForgotPasswordDto,
+  LoginDto,
   ResetPasswordDto,
   SignUpDto,
   VerifyOtpDto,
@@ -34,10 +35,6 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('Email or password is incorrect');
-    }
-
-    if (!user.verify) {
-      throw new UnauthorizedException('Please verify your email before login');
     }
 
     const match = await bcrypt.compare(password, user.password);
@@ -133,8 +130,8 @@ export class AuthService {
   /**
    * Login
    */
-  async login(email: string, password: string) {
-    const user = await this.validateUser(email, password);
+  async login(data: LoginDto) {
+    const user = await this.validateUser(data.email, data.password);
 
     const accessToken = this.generateAccessToken(user);
 
