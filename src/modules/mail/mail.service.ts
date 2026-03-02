@@ -21,6 +21,7 @@ export class MailService {
 
   sendOtp(email: string, code: string) {
     if (process.env.NODE_ENV !== 'production') return;
+    console.log('Sending OTP to', email, 'Code:', code);
     return this.transporter.sendMail({
       from: `"GD Home" <${process.env.MAIL_USER}>`,
       to: email,

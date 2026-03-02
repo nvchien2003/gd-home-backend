@@ -4,6 +4,7 @@ import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppDataSource } from './database/data-source';
 import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from './config/redis/redis.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
     TypeOrmModule.forRoot(AppDataSource.options),
     AuthModule,
     UserModule,
+    RedisModule,
   ],
   controllers: [],
   providers: [],

@@ -17,7 +17,6 @@ import {
   VerifyOtpDto,
 } from './dto/auth.dto';
 import { OtpType } from '../../common/constant/constant';
-import { verify } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -51,14 +50,14 @@ export class AuthService {
     console.log('to', dto);
     const user = await this.userService.create(dto);
 
-    const otp = await this.otpService.create(user.email, OtpType.VERIFY);
-    await this.mailService.sendOtp(user.email, otp.code);
+    const otp = await this.otpService.createOpt(user.email);
+    await this.mailService.sendOtp(user.email, otp);
 
     return { message: 'Check email to verify' };
   }
 
   async verifyOtp(dto: VerifyOtpDto) {
-    const otp = await this.otpService.validate(dto.email, dto.code, dto.type);
+    const otp = await this.otpService.verifyOtp(dto.email, dto.code);
     console.log('---------otp', dto.type);
     console.log('---------otp', OtpType.RESET);
 
@@ -86,8 +85,8 @@ export class AuthService {
     const user = await this.userService.findByEmail(dto.email);
     if (!user) return { message: 'If email exists, OTP sent' };
 
-    const otp = await this.otpService.create(dto.email, OtpType.RESET);
-    await this.mailService.sendOtp(dto.email, otp.code);
+    const otp = await this.otpService.createOpt(dto.email);
+    await this.mailService.sendOtp(dto.email, otp);
 
     return { message: 'OTP sent' };
   }

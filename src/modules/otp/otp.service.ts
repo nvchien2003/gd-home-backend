@@ -1,37 +1,35 @@
-import { OtpRepository } from '../repository/otp.repository';
-import { OtpType } from './../../common/constant/constant';
-import { Injectable } from '@nestjs/common';
+import { RedisService } from './../../config/redis/redis.service';
+
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class OtpService {
-  constructor(private otpRepository: OtpRepository) {}
+  constructor(private readonly redisService: RedisService) { }
 
-  async create(email: string, type: OtpType) {
-    let code = Math.floor(100000 + Math.random() * 900000).toString();
-
-    if (process.env.NODE_ENV !== 'production') {
-      code = '123456';
-    }
-
-    await this.otpRepository.delete({ email, type });
-
-    return this.otpRepository.save({
-      email,
-      code,
-      type,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
+  private getKey(identifier: string): string {
+    return `otp:${identifier}`;
   }
 
-  async validate(email: string, code: string, type: OtpType) {
-    const otp = await this.otpRepository.findOne({
-      where: { email, code, type },
-    });
-
-    if (!otp) return null;
-    if (otp.expiresAt < new Date()) return null;
-
-    await this.otpRepository.delete({ id: otp.id });
+  async createOpt(identifier: string): Promise<string> {
+    const client = this.redisService.getClient();
+    const key = this.getKey(identifier);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await client.set(key, otp, 'EX', 5 * 60); // 5 minutes expiry
     return otp;
+  }
+
+  async verifyOtp(identifier: string, otp: string): Promise<boolean> {
+    const client = this.redisService.getClient();
+    const key = this.getKey(identifier);
+    const storedOtp = await client.get(key);
+
+    if (storedOtp !== otp) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    if (storedOtp === otp) {
+      await this.redisService.del(key); // OTP is single-use
+      return true;
+    }
   }
 }
