@@ -4,7 +4,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class OtpService {
-  constructor(private readonly redisService: RedisService) { }
+  constructor(private readonly redisService: RedisService) {}
 
   private getKey(identifier: string): string {
     return `otp:${identifier}`;

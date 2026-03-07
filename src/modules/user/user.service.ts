@@ -59,9 +59,4 @@ export class UserService extends BaseService<User, UserRepository> {
     const user = await this.findByEmail(email);
     return !!user;
   }
-
-  async safeUser(user: User) {
-    const { password, ...rest } = user;
-    return rest;
-  }
 }

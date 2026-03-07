@@ -29,7 +29,7 @@ export class AuthorizationGuard implements CanActivate {
       const payload = this.jwtService.verify(token);
       request.user = payload; // gắn user vào request
       return true;
-    } catch (err) {
+    } catch {
       throw new UnauthorizedException('Token invalid or expired');
     }
   }
