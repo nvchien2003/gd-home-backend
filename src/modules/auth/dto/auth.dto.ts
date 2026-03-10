@@ -7,7 +7,11 @@ import {
   Length,
   MinLength,
 } from 'class-validator';
-import { OtpType } from '../../../common/constant/constant';
+import { OtpType } from '../../../common/enum/enum';
+
+export class UserJwtDto {
+  id: string;
+}
 
 export class LoginDto {
   @ApiProperty({ example: 'user@gmail.com' })

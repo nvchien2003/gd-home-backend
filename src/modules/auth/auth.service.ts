@@ -16,7 +16,7 @@ import {
   SignUpDto,
   VerifyOtpDto,
 } from './dto/auth.dto';
-import { OtpType } from '../../common/constant/constant';
+import { OtpType } from '../../common/enum/enum';
 
 @Injectable()
 export class AuthService {
@@ -83,7 +83,9 @@ export class AuthService {
 
   async forgotPassword(dto: ForgotPasswordDto) {
     const user = await this.userService.findByEmail(dto.email);
-    if (!user) return { message: 'If email exists, OTP sent' };
+    if (!user) {
+      throw new BadRequestException('Not found Email');
+    }
 
     const otp = await this.otpService.createOpt(dto.email);
     await this.mailService.sendOtp(dto.email, otp);
@@ -119,7 +121,7 @@ export class AuthService {
    */
   private generateAccessToken(user: User): string {
     const payload = {
-      sub: user.id,
+      id: user.id,
       email: user.email,
       isAdmin: user.isAdmin,
     };

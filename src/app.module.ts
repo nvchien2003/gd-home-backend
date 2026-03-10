@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
-import { ConfigModule } from '@nestjs/config';
-import { AppDataSource } from './database/data-source';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule } from './config/redis/redis.module';
+import { CommonModule } from './common/common.module';
+import { PropertyModules } from './modules/propety/propety.module';
+import { FileUploadModule } from './modules/file-upload/file-upload.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot(AppDataSource.options),
+    CommonModule,
     AuthModule,
     UserModule,
     RedisModule,
+    PropertyModules,
+    FileUploadModule,
   ],
   controllers: [],
   providers: [],

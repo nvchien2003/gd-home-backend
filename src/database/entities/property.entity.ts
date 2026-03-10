@@ -1,6 +1,5 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   ManyToOne,
   OneToMany,
@@ -13,20 +12,10 @@ import { Amenity } from './amenity.entity';
 import { PropertyImage } from './property-image.entity';
 import { Review } from './review.entity';
 import { User } from './user.entity';
-
-export enum PropertyType {
-  VILLA = 'villa',
-  APARTMENT = 'apartment',
-  HOUSE = 'house',
-  CABIN = 'cabin',
-  LOFT = 'loft',
-}
+import { PropertyType } from '../../common/enum/enum';
 
 @Entity('properties')
 export class Property extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
   @Column()
   title: string;
 
@@ -39,10 +28,10 @@ export class Property extends AbstractEntity {
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   pricePerMonth: number;
 
-  @Column()
+  @Column({ nullable: true })
   beds: number;
 
-  @Column({ type: 'decimal', precision: 3, scale: 1 })
+  @Column({ type: 'decimal', precision: 3, scale: 1, nullable: true })
   baths: number;
 
   @Column()
@@ -55,19 +44,13 @@ export class Property extends AbstractEntity {
   type: PropertyType;
 
   @Column()
-  city: string;
+  address: string;
 
   @Column()
   state: string;
 
-  @Column({ default: 'USA' })
-  country: string;
-
   @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
   averageRating: number;
-
-  @Column({ default: 0 })
-  totalReviews: number;
 
   @ManyToOne(() => User, (user) => user.properties, {
     onDelete: 'CASCADE',

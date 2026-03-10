@@ -1,20 +1,12 @@
 import { AbstractEntity } from '../../common/abstract/entity.abstract';
 
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  Index,
-} from 'typeorm';
+import { Entity, Column, OneToMany, Index } from 'typeorm';
 import { Property } from './property.entity';
 import { Review } from './review.entity';
+import { Medias } from './medias.entity';
 
 @Entity('users')
 export class User extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
   @Index({ unique: true })
   @Column()
   email: string;
@@ -42,4 +34,7 @@ export class User extends AbstractEntity {
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+
+  @OneToMany(() => Medias, (medias) => medias.user)
+  medias: Medias[];
 }

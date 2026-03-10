@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 import { Property } from './property.entity';
 import { User } from './user.entity';
@@ -12,9 +6,6 @@ import { AbstractEntity } from '../../common/abstract/entity.abstract';
 
 @Entity('reviews')
 export class Review extends AbstractEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
   @Column({ type: 'int' })
   rating: number;
 

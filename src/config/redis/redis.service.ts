@@ -6,9 +6,9 @@ export class RedisService implements OnModuleDestroy {
   private readonly client: Redis;
 
   constructor() {
-    this.client = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: Number(process.env.REDIS_PORT) || 6379,
+    this.client = new Redis(process.env.REDIS_URL, {
+      tls: {},
+      maxRetriesPerRequest: null,
     });
   }
 
