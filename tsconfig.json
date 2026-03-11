@@ -2,22 +2,20 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2021",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "outDir": "./dist",
-
-    "baseUrl": "./",
-    "paths": {
-      "src/*": ["src/*"]
-    },
 
     "moduleResolution": "node",
 
-    "incremental": true,
+    "types": ["node", "express"],
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    "declaration": true,
+    "removeComments": true,
+
+    "sourceMap": true,
+    "outDir": "./dist",
+
     "skipLibCheck": true
   }
 }
