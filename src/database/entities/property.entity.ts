@@ -9,10 +9,10 @@ import {
 } from 'typeorm';
 import { AbstractEntity } from '../../common/abstract/entity.abstract';
 import { Amenity } from './amenity.entity';
-import { PropertyImage } from './property-image.entity';
 import { Review } from './review.entity';
 import { User } from './user.entity';
 import { PropertyType } from '../../common/enum/enum';
+import { Medias } from './medias.entity';
 
 @Entity('properties')
 export class Property extends AbstractEntity {
@@ -58,10 +58,10 @@ export class Property extends AbstractEntity {
   @JoinColumn({ name: 'owner_id' })
   owner: User;
 
-  @OneToMany(() => PropertyImage, (image) => image.property, {
+  @OneToMany(() => Medias, (medias) => medias.property, {
     cascade: true,
   })
-  images: PropertyImage[];
+  medias: Medias[];
 
   @ManyToMany(() => Amenity, (amenity) => amenity.properties, {
     cascade: true,

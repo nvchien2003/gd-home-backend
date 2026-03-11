@@ -2,6 +2,7 @@ import { AbstractEntity } from './../../common/abstract/entity.abstract';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 import { MEDIA_TYPE, STATUS } from '../../common/constant/constant';
+import { Property } from './property.entity';
 
 @Entity('medias')
 export class Medias extends AbstractEntity {
@@ -19,6 +20,9 @@ export class Medias extends AbstractEntity {
 
   @ManyToOne(() => User, (user) => user.medias)
   user: User;
+
+  @ManyToOne(() => Property, (property) => property.medias)
+  property: Property;
 
   @Column({ type: 'jsonb', nullable: true })
   attributes: any;

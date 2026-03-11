@@ -53,7 +53,7 @@ export class FileUploadController {
       if (!files) throw new BadRequestException('false request');
       return await this.fileUploadService.create(files, userReq.id);
     } catch (error) {
-      console.log("UPLOAD ERROR:", error);
+      console.log('UPLOAD ERROR:', error);
       throw new BadRequestException(error);
     }
   }

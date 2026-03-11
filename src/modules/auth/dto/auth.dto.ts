@@ -14,11 +14,11 @@ export class UserJwtDto {
 }
 
 export class LoginDto {
-  @ApiProperty({ example: 'user@gmail.com' })
+  @ApiProperty({ example: 'chien@gmail.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '12345678' })
   @MinLength(8)
   password: string;
 }

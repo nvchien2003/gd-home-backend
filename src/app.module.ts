@@ -5,6 +5,7 @@ import { RedisModule } from './config/redis/redis.module';
 import { CommonModule } from './common/common.module';
 import { PropertyModules } from './modules/propety/propety.module';
 import { FileUploadModule } from './modules/file-upload/file-upload.module';
+import { AmenitiesModule } from './modules/amenity/amenities.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { FileUploadModule } from './modules/file-upload/file-upload.module';
     RedisModule,
     PropertyModules,
     FileUploadModule,
+    AmenitiesModule,
   ],
   controllers: [],
   providers: [],
