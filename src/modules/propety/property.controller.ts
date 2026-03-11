@@ -1,4 +1,4 @@
-import { UserReq } from 'src/common/decorators/user.decorator';
+import { UserReq } from '../../common/decorators/user.decorator';
 import { CreatePropertyDto } from './dto/property.dto';
 import { PropertyService } from './property.service';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
