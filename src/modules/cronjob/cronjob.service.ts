@@ -4,13 +4,14 @@ import axios from 'axios';
 
 @Injectable()
 export class CronJobService {
-  @Cron('0 */5 * * * *')
+  @Cron('30 * * * * *')
   async handleCron() {
     try {
-      await axios.get('https://gd-home-backend.onrender.com/cron/health');
+      if (process.env.NODE_ENV === 'development') return;
+      await axios.get('http://localhost:4000/cron/health');
       console.log('call second is 45');
     } catch (err) {
-      console.log('failed');
+      console.log('failed', err);
     }
   }
 }

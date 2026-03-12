@@ -53,7 +53,11 @@ export class AuthService {
     const otp = await this.otpService.createOpt(user.email);
     await this.mailService.sendOtp(user.email, otp);
 
-    return { message: 'Check email to verify' };
+    return {
+      email: user.email,
+      type: OtpType.VERIFY,
+      message: 'Check email to verify',
+    };
   }
 
   async verifyOtp(dto: VerifyOtpDto) {
@@ -90,7 +94,11 @@ export class AuthService {
     const otp = await this.otpService.createOpt(dto.email);
     await this.mailService.sendOtp(dto.email, otp);
 
-    return { message: 'OTP sent' };
+    return {
+      email: dto.email,
+      type: OtpType.RESET,
+      message: 'OTP sent',
+    };
   }
 
   async resetPassword(dto: ResetPasswordDto) {

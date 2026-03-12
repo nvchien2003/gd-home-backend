@@ -29,7 +29,7 @@ import { UserJwtDto } from '../auth/dto/auth.dto';
 @ApiTags('api/file-upload')
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller()
+@Controller('file-upload')
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 

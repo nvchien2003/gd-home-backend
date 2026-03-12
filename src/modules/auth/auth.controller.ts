@@ -24,6 +24,7 @@ export class AuthController {
 
   @Post('verify')
   verify(@Body() dto: VerifyOtpDto) {
+    console.log(dto);
     return this.authService.verifyOtp(dto);
   }
 
