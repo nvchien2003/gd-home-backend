@@ -6,6 +6,7 @@ import { CommonModule } from './common/common.module';
 import { PropertyModules } from './modules/propety/propety.module';
 import { FileUploadModule } from './modules/file-upload/file-upload.module';
 import { AmenitiesModule } from './modules/amenity/amenities.module';
+import { CronJobModule } from './modules/cronjob/cronjob.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AmenitiesModule } from './modules/amenity/amenities.module';
     PropertyModules,
     FileUploadModule,
     AmenitiesModule,
+    CronJobModule,
   ],
   controllers: [],
   providers: [],
