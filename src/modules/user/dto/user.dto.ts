@@ -25,3 +25,25 @@ export class CreateUserDto {
   @IsString()
   avatar?: string;
 }
+
+export class UpdateProfileDto {
+  @ApiProperty({ example: 'chien@gmail.com' })
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+}

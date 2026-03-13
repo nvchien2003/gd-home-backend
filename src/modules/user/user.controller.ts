@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from './dto/user.dto';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { CreateUserDto, UpdateProfileDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthorizationGuard } from '../auth/authorization.guard';
+import { UserReq } from '../../common/decorators/user.decorator';
+import { UserJwtDto } from '../auth/dto/auth.dto';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -20,5 +30,10 @@ export class UserController {
   @Get('me')
   profile(@Req() req) {
     return req.user;
+  }
+
+  @Put('update-profile')
+  updateProfile(@UserReq() req: UserJwtDto, @Body() dto: UpdateProfileDto) {
+    return this.userService.updateProfile(req.id, dto);
   }
 }

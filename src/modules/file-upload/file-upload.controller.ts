@@ -1,7 +1,3 @@
-/*
-https://docs.nestjs.com/controllers#controllers
-*/
-
 import {
   BadRequestException,
   Controller,
@@ -18,11 +14,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { FileUploadDto } from './file-upload.dto';
 import { FileUploadService } from './file-upload.service';
 import { AuthorizationGuard } from '../auth/authorization.guard';
-import { CustomFileType, editFileName } from '../../common/util/file';
+import { CustomFileType } from '../../common/util/file';
 import { UserReq } from '../../common/decorators/user.decorator';
 import { UserJwtDto } from '../auth/dto/auth.dto';
 
@@ -36,25 +32,28 @@ export class FileUploadController {
   @Post('upload')
   @UseInterceptors(
     AnyFilesInterceptor({
-      storage: diskStorage({
-        destination: `${process.env.STATIC_FOLDER || 'public/static'}`,
-        filename: editFileName,
-      }),
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 50 * 1024 * 1024,
+      },
     }),
   )
-  @ApiOperation({ summary: 'Upload file ( option selection mutiple file )' })
+  @ApiOperation({ summary: 'Upload multiple files' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ description: 'Upload file ', type: FileUploadDto })
+  @ApiBody({ description: 'Upload file', type: FileUploadDto })
   async uploadFileTemplate(
     @UploadedFiles() files: Array<CustomFileType>,
     @UserReq() userReq: UserJwtDto,
   ) {
     try {
-      if (!files) throw new BadRequestException('false request');
+      if (!files || files.length === 0) {
+        throw new BadRequestException('No files uploaded');
+      }
+
       return await this.fileUploadService.create(files, userReq.id);
     } catch (error) {
       console.log('UPLOAD ERROR:', error);
-      throw new BadRequestException(error);
+      throw new BadRequestException(error.message);
     }
   }
 }

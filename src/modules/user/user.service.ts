@@ -1,13 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { BaseService } from '../../common/base/base.service';
 import { User } from '../../database/entities/user.entity';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateProfileDto } from './dto/user.dto';
 import { UserRepository } from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
+import { DataSource } from 'typeorm';
+import { Medias } from '../../database/entities/medias.entity';
 
 @Injectable()
 export class UserService extends BaseService<User, UserRepository> {
-  constructor(private readonly userRepository: UserRepository) {
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly dataSource: DataSource,
+  ) {
     super(userRepository);
   }
   async create(data: CreateUserDto): Promise<User> {
@@ -50,8 +55,34 @@ export class UserService extends BaseService<User, UserRepository> {
   }
 
   // ✅ Update profile
-  async updateProfile(userId: string, data: Partial<User>) {
-    return this.userRepository.update({ id: userId }, data);
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+      if (dto.avatar) {
+        const media = manager.create(Medias, {
+          name: 'avatar',
+          url: dto.avatar,
+          user: user,
+        });
+
+        await manager.save(media);
+
+        user.avatar = dto.avatar;
+      }
+
+      Object.assign(user, {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+      });
+
+      return await manager.save(user);
+    });
   }
 
   // ✅ Check exists
