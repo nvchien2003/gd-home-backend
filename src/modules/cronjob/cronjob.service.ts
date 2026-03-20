@@ -8,7 +8,7 @@ export class CronJobService {
   async handleCron() {
     try {
       if (process.env.NODE_ENV === 'development') return;
-      await axios.get('http://localhost:4000/cron/health');
+      await axios.get('https://gd-home-backend.onrender.com/cron/health');
       console.log('call second is 45');
     } catch (err) {
       console.log('failed', err);
