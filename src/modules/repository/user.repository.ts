@@ -15,4 +15,11 @@ export class UserRepository extends Repository<User> {
       .where('user.email = :email', { email })
       .getOne();
   }
+
+  async updateProfile(userId: string, data: Partial<User>) {
+    await this.update(userId, data);
+    return this.findOne({
+      where: { id: userId },
+    });
+  }
 }

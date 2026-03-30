@@ -23,6 +23,12 @@ export class User extends AbstractEntity {
   @Column({ nullable: true })
   avatar: string;
 
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  location: string;
+
   @Column({ default: false })
   isAdmin: boolean;
 

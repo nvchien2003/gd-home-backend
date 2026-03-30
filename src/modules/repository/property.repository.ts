@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 export class PropertyRepository extends Repository<Property> {
   async findAll() {
     return this.find({
-      relations: ['images'],
+      relations: ['images', 'amenities'],
     });
   }
 

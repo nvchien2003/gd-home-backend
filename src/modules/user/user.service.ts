@@ -4,13 +4,14 @@ import { User } from '../../database/entities/user.entity';
 import { CreateUserDto, UpdateProfileDto } from './dto/user.dto';
 import { UserRepository } from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
-import { DataSource } from 'typeorm';
-import { Medias } from '../../database/entities/medias.entity';
+import { DataSource, FindOneOptions } from 'typeorm';
+import { MediasRepository } from '../repository/medias.repository';
 
 @Injectable()
 export class UserService extends BaseService<User, UserRepository> {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly mediaRepository: MediasRepository,
     private readonly dataSource: DataSource,
   ) {
     super(userRepository);
@@ -26,6 +27,13 @@ export class UserService extends BaseService<User, UserRepository> {
     return this.userRepository.save({
       ...data,
       password: hash,
+    });
+  }
+
+  findById(id: string, options?: FindOneOptions<User>): Promise<User> {
+    return this.userRepository.findOne({
+      where: { id },
+      ...options,
     });
   }
 
@@ -54,35 +62,33 @@ export class UserService extends BaseService<User, UserRepository> {
     return this.userRepository.update({ email }, { password: hash });
   }
 
-  // ✅ Update profile
   async updateProfile(userId: string, dto: UpdateProfileDto) {
-    return this.dataSource.transaction(async (manager) => {
-      const user = await manager.findOne(User, {
+    try {
+      console.log('-------update profile', userId, dto);
+      let avatar = null;
+      const user = await this.userRepository.findOne({
         where: { id: userId },
       });
+      if (!user) throw new BadRequestException('User not found');
 
-      if (!user) {
-        throw new BadRequestException('User not found');
+      if (dto.email) {
+        const exists = await this.userRepository.findByEmail(dto.email);
+        if (exists) throw new BadRequestException('Email already exists');
       }
+
       if (dto.avatar) {
-        const media = manager.create(Medias, {
-          name: 'avatar',
-          url: dto.avatar,
-          user: user,
-        });
-
-        await manager.save(media);
-
-        user.avatar = dto.avatar;
+        avatar = dto.avatar;
+      }
+      const _dto = { ...dto };
+      if (avatar) {
+        _dto.avatar = avatar;
       }
 
-      Object.assign(user, {
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-      });
-
-      return await manager.save(user);
-    });
+      return this.userRepository.update(userId, _dto);
+    } catch (error) {
+      console.log('error update profile', error);
+      throw error;
+    }
   }
 
   // ✅ Check exists

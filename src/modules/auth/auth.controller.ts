@@ -1,12 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ForgotPasswordDto,
   LoginDto,
   ResetPasswordDto,
   SignUpDto,
+  UserJwtDto,
   VerifyOtpDto,
 } from './dto/auth.dto';
+import { UserReq } from '../../common/decorators/user.decorator';
+import { AuthorizationGuard } from './authorization.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,5 +39,11 @@ export class AuthController {
   @Post('reset-password')
   reset(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
+  }
+
+  @Get('profile')
+  @UseGuards(AuthorizationGuard)
+  profile(@UserReq() userReq: UserJwtDto) {
+    return this.authService.profile(userReq.id);
   }
 }

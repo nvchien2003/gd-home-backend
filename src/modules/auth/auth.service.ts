@@ -147,15 +147,11 @@ export class AuthService {
 
     return {
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        avatar: user.avatar,
-        isAdmin: user.isAdmin,
-        verify: user.verify,
-      },
+      user: user,
     };
+  }
+
+  async profile(userId: string) {
+    return this.userService.findById(userId);
   }
 }

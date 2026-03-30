@@ -42,4 +42,13 @@ export class PropertyService {
 
     return this.propertyRepository.save(property);
   }
+
+  async findProperty() {
+    try {
+      const property = await this.propertyRepository.findAll();
+      return property;
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
 }
