@@ -21,9 +21,9 @@ export class Medias extends AbstractEntity {
   @ManyToOne(() => User, (user) => user.medias)
   user: User;
 
-  @ManyToOne(() => Property, (property) => property.medias)
+  @ManyToOne(() => Property, (property) => property.medias, { nullable: true })
   property: Property;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   attributes: any;
 }

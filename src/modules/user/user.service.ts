@@ -17,9 +17,7 @@ export class UserService extends BaseService<User, UserRepository> {
     super(userRepository);
   }
   async create(data: CreateUserDto): Promise<User> {
-    console.log(data);
     const exists = await this.userRepository.findByEmail(data.email);
-    console.log('---> email', exists);
     if (exists) throw new BadRequestException('Email already exists');
 
     const hash = await bcrypt.hash(data.password, 10);
@@ -64,7 +62,6 @@ export class UserService extends BaseService<User, UserRepository> {
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {
     try {
-      console.log('-------update profile', userId, dto);
       let avatar = null;
       const user = await this.userRepository.findOne({
         where: { id: userId },
@@ -84,9 +81,10 @@ export class UserService extends BaseService<User, UserRepository> {
         _dto.avatar = avatar;
       }
 
-      return this.userRepository.update(userId, _dto);
+      await this.userRepository.update(userId, _dto);
+
+      return this.findById(userId);
     } catch (error) {
-      console.log('error update profile', error);
       throw error;
     }
   }

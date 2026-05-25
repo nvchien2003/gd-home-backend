@@ -1,30 +1,54 @@
 import { Observable, map } from 'rxjs';
-import { INTERCEPTOR } from '../constant/constant';
 import {
   CallHandler,
   ExecutionContext,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { RAW_RESPONSE_KEY } from '../decorators/raw-response.decorator';
 export interface Response<T> {
-  signal: number;
-  statusCode: number;
+  success: boolean;
   data?: T;
-  messages?: string;
+  meta?: unknown;
 }
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
+  constructor(private readonly reflector: Reflector) {}
+
   intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Response<T>> {
+    const rawResponse = this.reflector.getAllAndOverride<boolean>(
+      RAW_RESPONSE_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+
     return next.handle().pipe(
-      map((data) => ({
-        signal: INTERCEPTOR.RESPONSE_SIGNAL.SUCCESS,
-        messages: INTERCEPTOR.RESPONSE_STATUS.SUCCESS,
-        statusCode: context.switchToHttp().getResponse().statusCode,
-        data,
-      })),
+      map((data) => {
+        if (rawResponse) {
+          return data;
+        }
+
+        if (
+          data &&
+          typeof data === 'object' &&
+          'items' in data &&
+          'meta' in data
+        ) {
+          return {
+            success: true,
+            data: data.items,
+            meta: data.meta,
+          };
+        }
+
+        return {
+          success: true,
+          data,
+        };
+      }),
     );
   }
 }

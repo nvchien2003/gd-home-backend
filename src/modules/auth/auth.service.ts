@@ -47,7 +47,6 @@ export class AuthService {
   }
 
   async signup(dto: SignUpDto) {
-    console.log('to', dto);
     const user = await this.userService.create(dto);
 
     const otp = await this.otpService.createOpt(user.email);
@@ -62,8 +61,6 @@ export class AuthService {
 
   async verifyOtp(dto: VerifyOtpDto) {
     const otp = await this.otpService.verifyOtp(dto.email, dto.code);
-    console.log('---------otp', dto.type);
-    console.log('---------otp', OtpType.RESET);
 
     if (!otp) throw new BadRequestException('Invalid or expired OTP');
 
@@ -79,7 +76,6 @@ export class AuthService {
         { email: dto.email, type: 'RESET' },
         { expiresIn: '10m' },
       );
-      console.log('-----------------reset', resetToken);
 
       return { resetToken };
     }
@@ -144,10 +140,11 @@ export class AuthService {
     const user = await this.validateUser(data.email, data.password);
 
     const accessToken = this.generateAccessToken(user);
+    const { password, ...safeUser } = user as any;
 
     return {
       accessToken,
-      user: user,
+      user: safeUser,
     };
   }
 

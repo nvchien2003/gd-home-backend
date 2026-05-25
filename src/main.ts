@@ -6,6 +6,7 @@ import { TransformInterceptor } from './common/interceptors/transform-intercepto
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -27,12 +28,13 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      transform: true,
     }),
   );
 
   //intercept
   app.useGlobalInterceptors(new TransformInterceptor());
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
 

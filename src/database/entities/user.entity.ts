@@ -1,7 +1,6 @@
 import { AbstractEntity } from '../../common/abstract/entity.abstract';
 
 import { Entity, Column, OneToMany, Index } from 'typeorm';
-import { Property } from './property.entity';
 import { Review } from './review.entity';
 import { Medias } from './medias.entity';
 
@@ -26,6 +25,7 @@ export class User extends AbstractEntity {
   @Column({ nullable: true })
   phone: string;
 
+  @Index('IDX_USERS_LOCATION')
   @Column({ nullable: true })
   location: string;
 
@@ -34,9 +34,6 @@ export class User extends AbstractEntity {
 
   @Column({ default: false })
   verify: boolean;
-
-  @OneToMany(() => Property, (property) => property.owner)
-  properties: Property[];
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];

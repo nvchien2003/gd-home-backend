@@ -1,30 +1,36 @@
 import {
   Entity,
   Column,
-  ManyToOne,
-  OneToMany,
-  ManyToMany,
+  CreateDateColumn,
+  Index,
   JoinColumn,
-  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
-import { AbstractEntity } from '../../common/abstract/entity.abstract';
-import { Amenity } from './amenity.entity';
 import { Review } from './review.entity';
-import { User } from './user.entity';
 import { PropertyType } from '../../common/enum/enum';
 import { Medias } from './medias.entity';
+import { Owner } from './owner.entity';
 
 @Entity('properties')
-export class Property extends AbstractEntity {
+export class Property {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Index('IDX_PROPERTIES_TITLE')
   @Column()
   title: string;
 
   @Column('text')
   description: string;
 
+  @Index('IDX_PROPERTIES_PRICE')
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   price: number;
 
+  @Index('IDX_PROPERTIES_PRICE_PER_MONTH')
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   pricePerMonth: number;
 
@@ -37,40 +43,47 @@ export class Property extends AbstractEntity {
   @Column()
   sqft: number;
 
+  @Index('IDX_PROPERTIES_TYPE')
   @Column({
     type: 'enum',
     enum: PropertyType,
   })
   type: PropertyType;
 
+  @Index('IDX_PROPERTIES_LOCATION')
   @Column()
-  address: string;
+  location: string;
 
   @Column()
-  state: string;
+  image: string;
 
   @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
-  averageRating: number;
+  rating: number;
 
-  @ManyToOne(() => User, (user) => user.properties, {
+  @Column({ type: 'int', default: 0 })
+  reviewsCount: number;
+
+  @Column({ type: 'simple-json', nullable: true })
+  amenities: string[];
+
+  @ManyToOne(() => Owner, (owner) => owner.properties, {
+    eager: false,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'owner_id' })
-  owner: User;
+  owner: Owner;
 
   @OneToMany(() => Medias, (medias) => medias.property, {
     cascade: true,
   })
   medias: Medias[];
 
-  @ManyToMany(() => Amenity, (amenity) => amenity.properties, {
-    cascade: true,
-  })
-  @JoinTable({
-    name: 'property_amenities',
-  })
-  amenities: Amenity[];
-
   @OneToMany(() => Review, (review) => review.property)
   reviews: Review[];
+
+  @CreateDateColumn()
+  createdOnDate: Date;
+
+  @UpdateDateColumn()
+  lastModifiedOnDate: Date;
 }

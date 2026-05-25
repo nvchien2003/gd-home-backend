@@ -10,12 +10,17 @@ import {
 } from './dto/auth.dto';
 import { UserReq } from '../../common/decorators/user.decorator';
 import { AuthorizationGuard } from './authorization.guard';
+import { RawResponse } from '../../common/decorators/raw-response.decorator';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @RawResponse()
+  @ApiOkResponse({ description: 'Returns accessToken and user directly.' })
   login(@Body() data: LoginDto) {
     return this.authService.login(data);
   }
@@ -42,6 +47,7 @@ export class AuthController {
   }
 
   @Get('profile')
+  @ApiBearerAuth()
   @UseGuards(AuthorizationGuard)
   profile(@UserReq() userReq: UserJwtDto) {
     return this.authService.profile(userReq.id);
